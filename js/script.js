@@ -37,11 +37,11 @@ const titleClickHandler = function(event){
 
   /* [DONE] add class 'active' to the correct article */
   targetArticle.classList.add('active');
-}
+};
 
 const optArticleSelector = '.post',
-    optTitleSelector = '.post-title',
-    optTitleListSelector = '.titles';
+  optTitleSelector = '.post-title',
+  optTitleListSelector = '.titles';
 
 const generateTitleLinks = function(){
   console.log('Generating title links');
@@ -50,7 +50,7 @@ const generateTitleLinks = function(){
   const titleList = document.querySelector(optTitleListSelector);
   const clearTitleList = function(){
     titleList.innerHTML = '';
-  }
+  };
   clearTitleList();
 
   const articles = document.querySelectorAll(optArticleSelector);
@@ -78,6 +78,6 @@ const generateTitleLinks = function(){
   for(let link of links){
     link.addEventListener('click', titleClickHandler);
   }
-}
+};
 
 generateTitleLinks();
