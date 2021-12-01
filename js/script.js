@@ -50,10 +50,7 @@ function generateTitleLinks(customSelector = ''){
 
   /* remove contents of titleList */
   const titleList = document.querySelector(optTitleListSelector);
-  const clearTitleList = function(){
-    titleList.innerHTML = '';
-  };
-  clearTitleList();
+  titleList.innerHTML = '';
 
   const articles = document.querySelectorAll(optArticleSelector + customSelector);
   
@@ -166,7 +163,7 @@ function generateAuthors(){
     /* create variable with empty html */
     let html = '';
     /* get author from data-author */
-    const author = authorWrapper.getAttribute('data-author');
+    const author = article.getAttribute('data-author');
     console.log('Author:', author);
       
     /* generate new html */
