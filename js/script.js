@@ -43,7 +43,10 @@ const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
   optTitleListSelector = '.titles',
   optArticleTagsSelector = '.post-tags .list',
-  optArticleAuthorSelector = '.post-author';
+  optArticleAuthorSelector = '.post-author',
+  optTagsListSelector = '.tags.list',
+  optCloudClassCount = '5',
+  optCloudClassPrefix = 'tag-size-';
 
 function generateTitleLinks(customSelector = ''){
   console.log('Generating title links');
@@ -81,9 +84,34 @@ function generateTitleLinks(customSelector = ''){
 
 generateTitleLinks();
 
+function calculateTagsParams(tags){
+  const params = {
+    max: 0, 
+    min: 999999,
+  };
+  for (let tag in tags){
+    console.log(tag + ' is used ' + tags[tag] + ' times');
+    if(tags[tag] > params.max){
+      params.max = tags[tag];
+    } else if(tags[tag] < params.min){
+      params.min = tags[tag];      
+    }
+  }
+  return params;
+}
+
+function calculateTagClass(count, params){
+  const normalizedCount = count - params.min;
+  const normalizedMax = params.max - params.min;
+  const percentage = normalizedCount / normalizedMax;
+  const classNumber = Math.floor(percentage * (optCloudClassCount - 1) + 1);
+  return optCloudClassPrefix + classNumber;
+}
 function generateTags(){
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
+  /* [NEW] create a new variable allTags with an empty object */
+  let allTags = {};
 
   /* START LOOP: for every article: */
   for (let article of articles){
@@ -105,12 +133,40 @@ function generateTags(){
 
       /* add generated code to html variable */
       html = html + tagHTML;
+      
+      /* [NEW] check if this link is NOT already in allTags */
+      if(!allTags[tag]){
+        /* [NEW] add tag to allTags object */
+        allTags[tag] = 1;
+      } else {
+        allTags[tag]++;
+      }
       /* END LOOP: for each tag */
     }
     /* insert HTML of all the links into the tags wrapper */
     tagsWrapper.innerHTML = html;
   /* END LOOP: for every article: */
-  } 
+  }
+  const tagList = document.querySelector('.tags');
+  /* [NEW] add HTML from allTags to tagList */
+  // tagList.innerHTML = allTags.join(' ');
+  // console.log('alltags', allTags);
+
+  const tagsParams = calculateTagsParams(allTags);
+  console.log('tagsParams:', tagsParams);
+
+  /* [NEW] create variable for all links HTML code */
+  let allTagsHTML = '';
+
+  /* [NEW] START LOOP: for each tag in allTags: */
+  for(let tag in allTags){
+  /* [NEW] generate code of a link and add it to allTagsHTML */
+    // allTagsHTML += tag + ' (' + allTags[tag] + ')' ;
+    allTagsHTML += '<li><a class="' + calculateTagClass(allTags[tag], tagsParams) + '" href="#tag-' + tag + '"><span>' + tag + ' (' + allTags[tag] + ') </span></a></li>';
+  }
+  /* [NEW] END LOOP: for each tag in allTags: */
+  /*[NEW] add HTML from allTagsHTML to tagList */
+  tagList.innerHTML = allTagsHTML;
 }
 
 generateTags();
@@ -164,12 +220,12 @@ function generateAuthors(){
     let html = '';
     /* get author from data-author */
     const author = article.getAttribute('data-author');
-    console.log('Author:', author);
+    // console.log('Author:', author);
       
     /* generate new html */
     const authorHTML = '<a href="#author-' + author + '"><span>' + author + '</span></a>';
     html = html + authorHTML;
-    console.log('authorHTML:', authorHTML);
+    // console.log('authorHTML:', authorHTML);
   
     /* insert html into wrapper */
     authorWrapper.innerHTML = html;
